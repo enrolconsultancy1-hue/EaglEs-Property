@@ -1,0 +1,86 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function activeTenant(tenantId) {
+      return signedIn() && request.auth.token.tenantId == tenantId;
+    }
+
+    function hasRole(role) {
+      return signedIn() && request.auth.token.role == role;
+    }
+
+    function isAdmin() {
+      return hasRole('TenantOwner') || hasRole('DeveloperAdmin');
+    }
+
+    function isSalesManager() {
+      return hasRole('SalesManager') || isAdmin();
+    }
+
+    function incomingTenant(tenantId) {
+      return request.resource.data.tenantId == tenantId;
+    }
+
+    match /users/{uid}/memberships/{tenantId} {
+      allow read: if signedIn() && uid == request.auth.uid;
+      allow write: if false;
+    }
+
+    match /tenants/{tenantId} {
+      allow read: if activeTenant(tenantId);
+      allow create: if signedIn() && hasRole('TenantOwner') &&
+        request.resource.data.id == tenantId &&
+        request.resource.data.ownerUid == request.auth.uid;
+      allow update: if activeTenant(tenantId) && isAdmin() && incomingTenant(tenantId);
+      allow delete: if activeTenant(tenantId) && hasRole('TenantOwner');
+
+      match /memberships/{uid} {
+        allow read: if activeTenant(tenantId) && uid == request.auth.uid ||
+          activeTenant(tenantId) && isAdmin();
+        allow write: if activeTenant(tenantId) && hasRole('TenantOwner');
+      }
+
+      match /staff/{uid} {
+        allow read: if activeTenant(tenantId);
+        allow create, update: if activeTenant(tenantId) && isAdmin() && incomingTenant(tenantId);
+        allow delete: if activeTenant(tenantId) && hasRole('TenantOwner');
+      }
+
+      match /projects/{projectId} {
+        allow read: if activeTenant(tenantId);
+        allow create, update: if activeTenant(tenantId) && isAdmin() && incomingTenant(tenantId);
+        allow delete: if activeTenant(tenantId) && hasRole('TenantOwner');
+
+        match /units/{unitId} {
+          allow read: if activeTenant(tenantId);
+          allow create, update: if activeTenant(tenantId) && isAdmin() && incomingTenant(tenantId);
+          allow delete: if activeTenant(tenantId) && isAdmin();
+        }
+      }
+
+      match /leads/{leadId} {
+        allow create: if activeTenant(tenantId) && incomingTenant(tenantId);
+        allow read: if activeTenant(tenantId) && (
+          isSalesManager() ||
+          (hasRole('SalesAgent') && resource.data.assignment.assignedAgentId == request.auth.uid)
+        );
+        allow update: if activeTenant(tenantId) && incomingTenant(tenantId) && (
+          isSalesManager() ||
+          (hasRole('SalesAgent') && resource.data.assignment.assignedAgentId == request.auth.uid &&
+            request.resource.data.assignment.assignedAgentId == request.auth.uid)
+        );
+        allow delete: if activeTenant(tenantId) && isAdmin();
+      }
+
+      match /salesAnalytics/{document} {
+        allow read: if activeTenant(tenantId) && isSalesManager();
+        allow write: if false;
+      }
+    }
+  }
+}
