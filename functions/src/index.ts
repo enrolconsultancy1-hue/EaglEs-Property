@@ -174,3 +174,5 @@ export const reserveUnit = onCall(async (request) => {
 
 export * from './finance/paymentWebhooks';
 export * from './pipelines/dataPipelines';
+export * from './ai/aiAssistant';
+export * from './notifications/notificationTriggers';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -68,6 +69,29 @@ class DashboardScreen extends ConsumerWidget {
               },
             ),
             const SizedBox(height: 32),
+            // Financial Revenue & Inventory Charts
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isWide = constraints.maxWidth > 800;
+                return isWide
+                    ? const Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(flex: 3, child: _RevenueChartCard()),
+                          SizedBox(width: 16),
+                          Expanded(flex: 2, child: _InventoryPieCard()),
+                        ],
+                      )
+                    : const Column(
+                        children: [
+                          _RevenueChartCard(),
+                          SizedBox(height: 16),
+                          _InventoryPieCard(),
+                        ],
+                      );
+              },
+            ),
+            const SizedBox(height: 32),
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
@@ -99,8 +123,8 @@ class DashboardScreen extends ConsumerWidget {
                     const Divider(),
                     const ListTile(
                       leading: Icon(Icons.local_fire_department, color: Colors.redAccent),
-                      title: Text('Hot Lead Detected: A. Tesfaye'),
-                      subtitle: Text('Lead engagement score: 87/100. High probability of closing Bole Sky Tower 3BR.'),
+                      title: Text('Hot Lead Detected: Marta Bekele'),
+                      subtitle: Text('Lead engagement score: 88/100. High probability of closing Bole Sky Tower 3BR.'),
                     ),
                   ],
                 ),
@@ -176,3 +200,123 @@ class _KpiCard extends StatelessWidget {
     );
   }
 }
+
+class _RevenueChartCard extends StatelessWidget {
+  const _RevenueChartCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'REVENUE & COLLECTIONS FORECAST (ETB MILLIONS)',
+              style: theme.textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 220,
+              child: LineChart(
+                LineChartData(
+                  gridData: const FlGridData(show: true),
+                  titlesData: const FlTitlesData(
+                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  ),
+                  borderData: FlBorderData(show: false),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: const [
+                        FlSpot(1, 12),
+                        FlSpot(2, 18),
+                        FlSpot(3, 25),
+                        FlSpot(4, 38),
+                        FlSpot(5, 45),
+                        FlSpot(6, 62),
+                      ],
+                      isCurved: true,
+                      color: theme.colorScheme.primary,
+                      barWidth: 3,
+                      dotData: const FlDotData(show: true),
+                      belowBarData: BarAreaData(
+                        show: true,
+                        color: theme.colorScheme.primary.withValues(alpha: 0.15),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _InventoryPieCard extends StatelessWidget {
+  const _InventoryPieCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'INVENTORY BREAKDOWN',
+              style: theme.textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 220,
+              child: PieChart(
+                PieChartData(
+                  sectionsSpace: 4,
+                  centerSpaceRadius: 40,
+                  sections: [
+                    PieChartSectionData(
+                      color: Colors.green,
+                      value: 45,
+                      title: '45% Sold',
+                      radius: 50,
+                      titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                    ),
+                    PieChartSectionData(
+                      color: Colors.orange,
+                      value: 30,
+                      title: '30% Reserved',
+                      radius: 50,
+                      titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                    ),
+                    PieChartSectionData(
+                      color: theme.colorScheme.primary,
+                      value: 25,
+                      title: '25% Avail.',
+                      radius: 50,
+                      titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

@@ -20,6 +20,9 @@ dependencies:
   intl: ^0.20.2
   flutter_localizations:
     sdk: flutter
+  pdf: ^3.10.8
+  printing: ^5.13.0
+  fl_chart: ^0.69.0
 
 dev_dependencies:
   flutter_test:

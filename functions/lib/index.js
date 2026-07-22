@@ -154,3 +154,5 @@ exports.reserveUnit = (0, https_1.onCall)(async (request) => {
 });
 __exportStar(require("./finance/paymentWebhooks"), exports);
 __exportStar(require("./pipelines/dataPipelines"), exports);
+__exportStar(require("./ai/aiAssistant"), exports);
+__exportStar(require("./notifications/notificationTriggers"), exports);
