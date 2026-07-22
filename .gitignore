@@ -1,0 +1,7 @@
+﻿node_modules/
+functions/node_modules/
+app/build/
+app/.dart_tool/
+app/.packages
+*.log
+.DS_Store
