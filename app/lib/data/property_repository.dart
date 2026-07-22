@@ -16,8 +16,20 @@ class MockPropertyRepository implements PropertyRepository {
   }
 
   final List<Tenant> _tenants = const [
-    Tenant(id: 'eagles', name: 'EaglEs Development Group', currency: 'ETB'),
-    Tenant(id: 'summit', name: 'Summit Properties', currency: 'USD'),
+    Tenant(
+      id: 'eagles',
+      name: 'EaglEs Development Group',
+      currency: 'ETB',
+      brandColorHex: '0B5FFF',
+      logoUrl: 'https://via.placeholder.com/150x50.png?text=EaglEs+Dev',
+    ),
+    Tenant(
+      id: 'summit',
+      name: 'Summit Properties',
+      currency: 'ETB',
+      brandColorHex: '00C48C',
+      logoUrl: 'https://via.placeholder.com/150x50.png?text=Summit+Prop',
+    ),
   ];
   final List<Project> _projects = [];
   final List<Lead> _leads = [];

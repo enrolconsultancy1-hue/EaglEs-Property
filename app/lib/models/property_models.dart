@@ -23,10 +23,21 @@ extension LeadStageLabel on LeadStage {
 }
 
 class Tenant {
-  const Tenant({required this.id, required this.name, required this.currency});
+  const Tenant({
+    required this.id,
+    required this.name,
+    required this.currency,
+    this.logoUrl,
+    this.brandColorHex,
+    this.secondaryColorHex,
+  });
+
   final String id;
   final String name;
   final String currency;
+  final String? logoUrl;
+  final String? brandColorHex;
+  final String? secondaryColorHex;
 }
 
 class Project {

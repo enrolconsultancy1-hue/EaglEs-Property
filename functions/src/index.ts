@@ -98,6 +98,12 @@ export const switchTenant = onCall(async (request) => {
 
 export const onUserSignedIn = beforeUserSignedIn(async (event) => {
   const user = event.data;
+
+  // Fix for TS18048: user is possibly undefined
+  if (!user) {
+    return;
+  }
+
   const membership = await db.collection(`users/${user.uid}/memberships`)
     .where('active', '==', true)
     .limit(1)
@@ -109,6 +115,8 @@ export const onUserSignedIn = beforeUserSignedIn(async (event) => {
 
   const firstMembership = membership.docs[0];
   const role = String(firstMembership.data().role ?? 'SalesAgent');
+  
+  // Re-fetch memberships to set the list of authorized tenants in claims
   const memberships = await db.collection(`users/${user.uid}/memberships`)
     .where('active', '==', true)
     .get();
@@ -163,3 +171,6 @@ export const reserveUnit = onCall(async (request) => {
 
   return { status: 'Reserved', projectId, unitId, leadId };
 });
+
+export * from './finance/paymentWebhooks';
+export * from './pipelines/dataPipelines';

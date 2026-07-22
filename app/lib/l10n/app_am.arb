@@ -1,0 +1,13 @@
+{
+  "@@locale": "am",
+  "appTitle": "EaglEs ንብረት",
+  "navDashboard": "ዳሽቦርድ",
+  "navProperties": "ንብረቶች",
+  "navConstruction": "ግንባታ",
+  "navSalesCrm": "የሽያጭ CRM",
+  "navMarketplace": "ገበያ",
+  "navAiAssistant": "ሚስተር EaglEs",
+  "navSettings": "ቅንብሮች",
+  "currencySymbol": "ብር",
+  "welcomeMessage": "እንኳን ወደ {tenantName} በደህና መጡ"
+}

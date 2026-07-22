@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'l10n/app_localizations.dart';
 
-import 'core/router/router.dart';
-import 'core/data/providers.dart';
+import 'src/core/router/app_router.dart';
+import 'src/core/theme/app_theme.dart';
+import 'data/providers.dart';
 
 void main() => runApp(const ProviderScope(child: EaglesPropertyApp()));
 
@@ -13,15 +16,34 @@ class EaglesPropertyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
+    final tenantId = ref.watch(activeTenantProvider);
+    final tenant = ref.watch(propertyRepositoryProvider).tenants.firstWhere((t) => t.id == tenantId);
+    
+    Color? brandColor;
+    if (tenant.brandColorHex != null) {
+      brandColor = Color(int.parse('0xFF${tenant.brandColorHex}'));
+    }
 
     return MaterialApp.router(
       title: 'EaglEs Property',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF356B5A)),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.lightTheme(brandColor),
+      darkTheme: AppTheme.darkTheme(brandColor),
+      themeMode: ThemeMode.system,
       routerConfig: router,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('am'),
+        Locale('ti'),
+        Locale('om'),
+      ],
+      locale: const Locale('en'),
     );
   }
 }
@@ -50,7 +72,18 @@ class WorkspaceShell extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(tenant.name),
+        title: Row(
+          children: [
+            if (tenant.logoUrl != null) ...[
+              CircleAvatar(
+                backgroundImage: NetworkImage(tenant.logoUrl!),
+                radius: 16,
+              ),
+              const SizedBox(width: 8),
+            ],
+            Text(tenant.name),
+          ],
+        ),
         actions: [
           PopupMenuButton<String>(
             tooltip: 'Switch workspace',
@@ -73,25 +106,25 @@ class WorkspaceShell extends ConsumerWidget {
   }
 
   int _getSelectedIndex(String location) {
-    if (location.startsWith('/dashboard')) return 0;
-    if (location.startsWith('/properties')) return 1;
+    if (location.startsWith('/app/dashboard') || location == '/dashboard') return 0;
+    if (location.startsWith('/app/projects') || location == '/properties') return 1;
     if (location.startsWith('/construction')) return 2;
     if (location.startsWith('/sales-crm')) return 3;
     if (location.startsWith('/marketplace')) return 4;
     if (location.startsWith('/mr-eagles')) return 5;
-    if (location.startsWith('/settings')) return 6;
+    if (location.startsWith('/app/settings') || location == '/settings') return 6;
     return 0;
   }
 
   void _onDestinationSelected(BuildContext context, int index) {
     switch (index) {
-      case 0: context.go('/dashboard'); break;
-      case 1: context.go('/properties'); break;
+      case 0: context.go('/app/dashboard'); break;
+      case 1: context.go('/app/projects'); break;
       case 2: context.go('/construction'); break;
       case 3: context.go('/sales-crm'); break;
       case 4: context.go('/marketplace'); break;
       case 5: context.go('/mr-eagles'); break;
-      case 6: context.go('/settings'); break;
+      case 6: context.go('/app/settings'); break;
     }
   }
 }

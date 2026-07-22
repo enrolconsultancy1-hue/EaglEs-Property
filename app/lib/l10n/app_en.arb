@@ -1,0 +1,23 @@
+{
+  "@@locale": "en",
+  "appTitle": "EaglEs Property",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "navDashboard": "Dashboard",
+  "navProperties": "Properties",
+  "navConstruction": "Construction",
+  "navSalesCrm": "Sales CRM",
+  "navMarketplace": "Marketplace",
+  "navAiAssistant": "Mr. EaglEs",
+  "navSettings": "Settings",
+  "currencySymbol": "ETB",
+  "welcomeMessage": "Welcome to {tenantName}",
+  "@welcomeMessage": {
+    "placeholders": {
+      "tenantName": {
+        "type": "String"
+      }
+    }
+  }
+}

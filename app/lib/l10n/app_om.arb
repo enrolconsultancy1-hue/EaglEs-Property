@@ -1,0 +1,13 @@
+{
+  "@@locale": "om",
+  "appTitle": "Qabeenya EaglEs",
+  "navDashboard": "Daashboordii",
+  "navProperties": "Qabeenyawwan",
+  "navConstruction": "Ijaarsa",
+  "navSalesCrm": "Gurgurtaa CRM",
+  "navMarketplace": "Gabaa",
+  "navAiAssistant": "Obbo EaglEs",
+  "navSettings": "Sajoo",
+  "currencySymbol": "Birrii",
+  "welcomeMessage": "Baga gara {tenantName} nagaan dhuftan"
+}
